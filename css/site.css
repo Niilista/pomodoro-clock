@@ -1,0 +1,41 @@
+body{
+    background-color: #ffaaaa;
+}
+
+.clock {
+    width: 140px;
+    height: 130px;
+    font-size: 108;
+    font-family: monospace;
+    color: #e4e4e4;
+
+    border-radius: 15px;
+    border: 2px solid #f5f5f5;
+    background-color: #ff9999;
+    /*padding: 57px;*/
+}
+
+.layout {
+    display: flex;
+    flex-direction: row;
+}
+
+.content {
+    justify-content: center;
+    margin: 3px;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.content button {
+    margin: 5px;
+    width: 150px;
+    height: 40px;
+
+    font-size: 28;
+
+    border: 1px #f5f5f5 solid;
+    border-radius: 10px;
+    background-color: #f55555;
+    color: #e4e4e4;
+}

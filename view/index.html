@@ -2,19 +2,33 @@
 
     <head>
         <title>Pomodoro Clock</title>
+        <link rel="stylesheet" type="text/css" href="../css/site.css">
+        <meta charset="UTF-8">
     </head>
 
     <body>
-        <h3 id="clock"></h3>
-        <label for="hour">Hora</label>
-        <input id="hour" placeholder="00" type="number"/>
-        <label for="minute">Minutos</label>
-        <input id="minute" placeholder="00" type="number"/>
-        <label for="second">Segundos</label>
-        <input id="second" placeholder="00" type="number"/>
+        <div class="layout">
+            <div class="content">
+                <label for="hour">Hora</label>
+                <input class="clock" id="hour" placeholder="00" value="00" type="number" />
+            </div>
 
-        <button id="start">Iniciar Cronometro</button>
+            <div class="content">
+                <label for="minute">Minutos</label>
+                <input class="clock" id="minute" placeholder="00" value="25" type="number" />
+            </div>
 
+            <div class="content">
+                <label for="second">Segundos</label>
+                <input class="clock" id="second" placeholder="00" value="00" type="number" />
+            </div>
+            
+            <div class="content">
+                <button id="start">Iniciar</button>
+                <button id="pause">Pausar</button>
+                <button id="stop">Resetar</button>
+            </div>
+        </div>
     </body>
     <script src="../utils/main.js"></script>
 </htlm>
