@@ -3,27 +3,42 @@ var minInput = document.getElementById("minute");
 var hourInput = document.getElementById("hour");
 var start = document.getElementById("start");
 var pause = document.getElementById("pause");
-var stopClock = document.getElementById("stop");
-var flag = false;
+var reset = document.getElementById("reset");
+var initial = [];
+
+
+var startingFlag = true;
+var endClock = false;
 var keepGoing = true;
+var pomodoroCheck = false;
 
 //Notification.requestPermission();
 
+
+// ====================== EVENT LISTENERS
 secInput.addEventListener("input", function () {
-    secInput.value = checkTime(secInput.value);
+    pauseClock();
+    secInput.value = getSeconds(secInput.value);
+    startingFlag = true;
 });
 minInput.addEventListener("input", function () {
-    minInput.value = checkTime(minInput.value);
+    pauseClock();
+    minInput.value = getMinutes(minInput.value);
+    startingFlag = true;
 });
 hourInput.addEventListener("input", function () {
-    hourInput.value = checkTime(hourInput.value);
+    pauseClock();
+    hourInput.value = getHours(hourInput.value);
+    startingFlag = true;
 });
 
 start.addEventListener("click", function () {
-    var hours = document.getElementById("hour").value;
-    var minutes = document.getElementById("minute").value;
-    var seconds = document.getElementById("second").value;
-    keepGoing = true;
+    var hours = hourInput.value;
+    var minutes = minInput.value;
+    var seconds = secInput.value;
+
+    resumeClock();
+
     if (!hours) {
         hours = 0;
     }
@@ -33,18 +48,26 @@ start.addEventListener("click", function () {
     if (!seconds) {
         seconds = 0;
     }
+
+    firstValue(hours, minutes, seconds);
     getClock(hours, minutes, seconds);
 });
 
-pause.addEventListener("click", function () {
-    keepGoing = false;
+pause.addEventListener("click", pauseClock);
+
+reset.addEventListener("click", function () {
+    hourInput.value = initial[0];
+    minInput.value = initial[1];
+    secInputvalue = initial[2];
+
+    pauseClock();
+
+    startingFlag = true;
 });
-
-stopClock.addEventListener("click", function () {
-    console.log("stop");
-});
+// ===================================
 
 
+// Não utilizada/finalizada
 function spawnNotification(corpo, icone, titulo) {
     var opcoes = {
         body: corpo,
@@ -59,7 +82,7 @@ function getClock(hours, minutes, seconds) {
     var showMin = checkTime(minutes);
     var showSec = checkTime(seconds);
 
-    if( keepGoing == false ){
+    if (keepGoing == false) {
         clearTimeout();
         return;
     }
@@ -68,32 +91,62 @@ function getClock(hours, minutes, seconds) {
     minInput.value = showMin;
     hourInput.value = showHour;
 
-    flag = false;
-
-    if (seconds == 0) {
-        if (minutes == 0) {
-            if (hours == 0) {
-                flag = true;
-            } else {
-                hours--;
-                minutes = 59;
-                seconds = 59;
-            }
-        } else {
-            minutes--;
-            seconds = 59;
-        }
-    } else {
-        seconds--;
-    }
-
-
-    if (flag == true) {
+    if (endClock == true) {
         new Notification("Relógio Finalizado!");
-        return;
-    }else {
+        pomodoro();
+    } else {
+        endClock = false;
+        if(seconds == 0 ) {
+            if(minutes == 0 ) {
+                if(hours == 0 ) {
+                    hours = getHours(0);
+                    minutes = getMinutes(0);
+                    seconds = getSeconds(0);
+                    endClock = true;
+                }else{ 
+                    hours = getHours(hours - 1);
+                    minutes = getMinutes(59);
+                    seconds = getSeconds(59);
+                }
+            }else {
+                minutes = getMinutes(minutes - 1);
+                seconds = getSeconds(59);
+            }
+        }else {
+            seconds = getSeconds(seconds -1);
+        }
         setTimeout(function () { getClock(hours, minutes, seconds); }, 1000);
     }
+}
+
+function getSeconds(sec) {
+    if (sec < 0) {
+        sec = 59;
+    }else if (sec > 59) {
+        sec = 0;
+    }
+    sec = checkTime(sec);
+    return sec;
+}
+
+function getMinutes(min) {
+    if (min < 0) {
+        min = 59;
+    }else if (min > 59) {
+        min = 0;
+    }
+    min = checkTime(min);
+    return min;
+}
+
+function getHours(hour) {
+    if (hour < 0) {
+        hour = 23;
+    }else if (hour > 23) {
+        hour = 0;
+    }
+    hour = checkTime(hour);
+    return hour;
 }
 
 function checkTime(num) {
@@ -102,4 +155,37 @@ function checkTime(num) {
         string = "0" + string;
     }
     return string;
+}
+
+function pauseClock() {
+    keepGoing = false;
+}
+
+function resumeClock() {
+    keepGoing = true;
+}
+
+function firstValue(hour, min, sec) {
+    if (startingFlag == true) {
+        initial = [hour, min, sec];
+        startingFlag = false;
+    }
+}
+
+function pomodoro () {
+    if ( pomodoroCheck == false) {
+        secInput.value = checkTime(5);
+        minInput.value = checkTime(0);
+        hourInput.value = checkTime(0);
+        pomodoroCheck = true;
+        endClock = false;
+    } else {
+        secInput.value = checkTime(initial[2]);
+        minInput.value = checkTime(initial[1]);
+        hourInput.value = checkTime(initial[0]);
+        pomodoroCheck = false;
+        endClock = false;
+    }
+    getClock(hourInput.value, minInput.value, secInput.value);
+    return;
 }
