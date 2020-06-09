@@ -68,12 +68,32 @@ reset.addEventListener("click", function () {
 
 
 // Não utilizada/finalizada
-function spawnNotification(corpo, icone, titulo) {
-    var opcoes = {
-        body: corpo,
-        icon: icone
+function spawnNotification() {
+    if(!("Notification" in window)) {
+        alert ("This browser does not support system notification");
+    } else if (Notification.permission === "granted") {
+        notificar();
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+            if (permission === 'granted') {
+                notificar();
+            }
+        });
     }
-    var n = new Notification(titulo, opcoes);
+
+    function notificar() {
+        var notification = new Notification('Titulo', {
+            icon: "../img/noTime.gif",
+            body: "Tempo acabou!",
+        });
+
+        notification.onclick = function () {
+            window.open("http://www.google.com");
+        };
+
+        setTimeout(notification.close.bind(notification), 5000);
+    }
+
 }
 
 function getClock(hours, minutes, seconds) {
@@ -92,7 +112,7 @@ function getClock(hours, minutes, seconds) {
     hourInput.value = showHour;
 
     if (endClock == true) {
-        new Notification("Relógio Finalizado!");
+        spawnNotification();
         pomodoro();
     } else {
         endClock = false;
